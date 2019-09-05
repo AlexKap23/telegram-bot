@@ -44,23 +44,38 @@ public class AlexKapBot extends TelegramLongPollingBot {
 
 	@Override
 	public void onUpdateReceived(Update update) {
+		String command = update.getMessage().getText();
 		int length = update.getMessage().getText().length();
 		try {
-			if (update.getMessage().getText().contains("/addidea")) {
+			if (command.startsWith("/addidea")) {
+				// /addidea message date
 				logger.debug("DEBUG - Handling /addidea command");
 				String idea = update.getMessage().getText().substring(8, length - 10);
 				String rememberDate = update.getMessage().getText().substring(length - 10, length);
 				addIdea(idea, update.getMessage().getFrom().getId(), update.getMessage().getDate(), rememberDate,
 				        update.getMessage().getChatId());
-			} else if (update.getMessage().getText().startsWith("/delete")) {
+			} else if (command.startsWith("/delete")) {
+				// /delete <id,id id/id>
 				logger.debug("DEBUG - handling /delete command");
 				String deleteCommand = update.getMessage().getText().substring(8, length);
 				sendMessageToUser(update.getMessage().getChatId(), deleteIdeas(deleteCommand));
-			} else if(update.getMessage().getText().startsWith("/updateIdeas")){
-				logger.debug("DEBUG - handling /delete command");
+			} else if (command.startsWith("/updateIdea")) {
+				// /updateIdea <id> <param,param,..> <value,value,value>
+				logger.debug("DEBUG - handling /updateIdea command");
+				String updateCommand = update.getMessage().getText().substring(12, length);
+				sendMessageToUser(update.getMessage().getChatId(), updateIdea(updateCommand));
+			} else if (command.startsWith("/allIdeas")) {
+				// /allIdeas
+				List<Idea> todays = ideaRepository.fetchTodaysIdeas(new Date());
+				logger.debug("DEBUG - handling /allIdeas command");
+				for (Idea idea : todays) {
+					sendMessageToUser(idea.getChatId(),
+					                  "ID:".concat(String.valueOf(idea.getId()))
+						                  .concat(" message is: " + idea.getMessage()));
+				}
 			}
 		} catch (Exception e) {
-			logger.error("Exception caught ", e.getCause());
+			logger.error("Exception caught while update received", e.getCause());
 		}
 	}
 
@@ -133,34 +148,43 @@ public class AlexKapBot extends TelegramLongPollingBot {
 		return message;
 	}
 
-	private String updateIdea(String updateCommand){
+	private String updateIdea(String updateCommand) {
 		logger.debug("DEBUG - updateIdeas method. ");
 		String[] updateCommandParts = updateCommand.split(" ");
-		String [] params = updateCommandParts[1].split(",");
-		String [] values = updateCommandParts[2].split(",");
-		String message = "Idea updated";
+		String[] params = updateCommandParts[1].split(",");
+		String[] values = updateCommandParts[2].split(",");
+		String message = null;
 		try {
-			for (String param : params) {
-				long id = Long.valueOf(updateCommandParts[0]);
-				Idea ideaToUpdate = ideaService.findById(id);
-
-				ideaService.save(ideaToUpdate);
+			logger.info("DEBUG - updateIdeas method. ");
+			if (updateCommandParts.length > 3) {
+				message = "ERROR - Possible format error. Please use correct format - Aborting update";
+			} else {
+				for (int i = 0; i < params.length; i++) {
+					long id = Long.valueOf(updateCommandParts[0]);
+					Idea ideaToUpdate = ideaService.findById(id);
+					if (values[i] != ideaService.getPropertyValue(ideaToUpdate, params[i])) {
+						ideaService.setPropertyValue(ideaToUpdate, params[i], values[i]);
+					}
+					ideaService.save(ideaToUpdate);
+					message = "Idea updated";
+				}
 			}
 		} catch (Exception e) {
-			message = "ERROR - Aborting update";
-			logger.error("Error while deleting ideas.", e.getCause());
+			message = "ERROR - Possible format error. Please use correct format - Aborting update";
+			logger.error("ERROR - Aborting update ", e.getCause());
 		}
 
 		return message;
 	}
 
 	//@Scheduled(cron = "0 0 10 ? * *")
-	@Scheduled(cron = "0 35 16 ? * *")
+	@Scheduled(cron = "0 54 13 ? * *")
 	private void fetchIdea() {
 		logger.debug("DEBUG - Fetching ideas");
 		List<Idea> todaysThings = ideaRepository.fetchByRememberDate(new Date());
 		for (Idea idea : todaysThings) {
-			sendMessageToUser(idea.getChatId(), "ID:".concat(String.valueOf(idea.getId())).concat(" message is: "+idea.getMessage()));
+			sendMessageToUser(idea.getChatId(),
+			                  "ID:".concat(String.valueOf(idea.getId())).concat(" message is: " + idea.getMessage()));
 			logger.debug("DEBUG - Sending idea now");
 		}
 

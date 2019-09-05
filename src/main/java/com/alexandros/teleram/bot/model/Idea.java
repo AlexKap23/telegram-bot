@@ -16,7 +16,9 @@ import java.util.Date;
 @Entity
 @Table(name = "ideas")
 @NamedQuery(name="Idea.fetchByRememberDate",
-			query="SELECT i from Idea i WHERE i.rememberDate =:date ")
+			query="SELECT i from Idea i WHERE i.rememberDate =:date AND i.status IS NULL")
+@NamedQuery(name ="Idea.fetchTodaysIdeas",
+			query="SELECT i from Idea i WHERE i.rememberDate >=:date")
 public class Idea implements Serializable {
 
 	@Id

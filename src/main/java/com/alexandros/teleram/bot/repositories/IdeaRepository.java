@@ -12,4 +12,5 @@ import java.util.List;
 @Repository
 public interface IdeaRepository extends JpaRepository<Idea,Long>,CrudRepository<Idea,Long> {
 	List<Idea> fetchByRememberDate(@Param("date") Date date);
+	List<Idea> fetchTodaysIdeas(@Param("date") Date date);
 }
