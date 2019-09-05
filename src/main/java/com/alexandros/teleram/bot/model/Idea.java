@@ -34,6 +34,8 @@ public class Idea implements Serializable {
 	private Date rememberDate;
 	@Column(name="chat_id")
 	private Long chatId;
+	@Column(name="status")
+	private String status;
 
 	public long getId() {
 		return id;
@@ -81,5 +83,13 @@ public class Idea implements Serializable {
 
 	public void setChatId(Long chatId) {
 		this.chatId = chatId;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }
