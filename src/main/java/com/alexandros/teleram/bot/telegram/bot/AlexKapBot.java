@@ -73,6 +73,9 @@ public class AlexKapBot extends TelegramLongPollingBot {
 					                  "ID:".concat(String.valueOf(idea.getId()))
 						                  .concat(" message is: " + idea.getMessage()));
 				}
+			}else if (command.startsWith("/temp")){
+				String publisherId = update.getMessage().getFrom().getId().toString();
+				/*IMqttClient publisher = new MqttClient("tcp://iot.eclipse.org:1883",publisherId);*/
 			}
 		} catch (Exception e) {
 			logger.error("Exception caught while update received", e.getCause());
