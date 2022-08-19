@@ -7,6 +7,7 @@ import static com.alexandros.teleram.bot.util.Constants.EXCEPTION_SHOW_BY_NAME;
 import static com.alexandros.teleram.bot.util.Constants.MESSAGE_IS_EMPTY;
 import static com.alexandros.teleram.bot.util.Constants.NO_USERS_SAVED;
 import static com.alexandros.teleram.bot.util.Constants.NO_USER_BY_NAME;
+import static com.alexandros.teleram.bot.util.Constants.SLASH;
 import static com.alexandros.teleram.bot.util.Constants.SUCCESS_ADD_USER_INFO;
 
 import com.alexandros.teleram.bot.model.UserInfo;
@@ -14,10 +15,10 @@ import com.alexandros.teleram.bot.repositories.UserInfoRepository;
 import com.alexandros.teleram.bot.util.CommandEnum;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -36,6 +37,7 @@ public class CommandProcessService {
 
     public String executeCommand(String message){
         String response = null;
+        if(StringUtils.isNotEmpty(message) && !message.startsWith(SLASH)) return null;
         String command = extractCommandFromMessage(message);
         CommandEnum commandEnum = CommandEnum.getByCommand(command);
         if(Objects.isNull(commandEnum)){

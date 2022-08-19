@@ -1,6 +1,7 @@
 package com.alexandros.teleram.bot.telegram.bot;
 
 import com.alexandros.teleram.bot.services.CommandProcessService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,6 +50,7 @@ public class AlexKapBot extends TelegramLongPollingBot {
 		String command = update.getMessage().getText();
 		try {
 			String message = commandProcessService.executeCommand(command);
+			if(StringUtils.isEmpty(message) || StringUtils.isBlank(message)) return;
 			sendMessageToUser(update.getMessage().getChatId(), message);
 		} catch (Exception e) {
 			logger.error("Exception caught while update received", e.getCause());

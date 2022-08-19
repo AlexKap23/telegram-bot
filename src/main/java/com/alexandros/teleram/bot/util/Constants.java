@@ -3,6 +3,7 @@ package com.alexandros.teleram.bot.util;
 public class Constants {
 
     public static final String DASH = "-";
+    public static final String SLASH = "/";
     public static final String SUCCESS_ADD_USER_INFO = "user.success.add";
     public static final String EXCEPTION_ADD_USER_INFO = "exception.user.info";
     public static final String MESSAGE_IS_EMPTY = "message is empty";
