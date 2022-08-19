@@ -2,10 +2,10 @@ package com.alexandros.teleram.bot.util;
 
 public enum CommandEnum {
 
-    ADD_USER_INFO("addUserInfo","/addUserInfo"),
-    UPDATE_USER_INFO("updateUserInfo","/updateUserInfo"),
-    DISPLAY("display","/displayInfo"),
-    SHOW_ALL("showAll","/showAll");
+    ADD_USER_INFO("addUserInfo","/adduserinfo"),
+    UPDATE_USER_INFO("updateUserInfo","/updateuserinfo"),
+    DISPLAY("display","/displayinfo"),
+    SHOW_ALL("showAll","/showall");
 
     private String commandId;
     private String command;

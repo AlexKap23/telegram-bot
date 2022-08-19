@@ -2,24 +2,30 @@ package com.alexandros.teleram.bot.model;
 
 import org.apache.commons.codec.binary.StringUtils;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("botinfo")
+@Document(collection = "botinfo")
 public class UserInfo {
+
+    @Transient
+    public static final String SEQUENCE_NAME = "users_sequence";
     @Id
     private String id;
     private String name;
     private String afm;
     private String amka;
     private String mobilePhone;
+    private String email;
 
 
-    public UserInfo(String id, String name, String afm, String amka, String mobilePhone) {
+    public UserInfo(String id, String name, String afm, String amka, String mobilePhone,String email) {
         this.id = id;
         this.name = name;
         this.afm = afm;
         this.amka = amka;
         this.mobilePhone = mobilePhone;
+        this.email = email;
     }
 
     public String getId() {
@@ -62,8 +68,17 @@ public class UserInfo {
         this.mobilePhone = mobilePhone;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public String toString() {
-        return "Id:"+this.id+" \n"+"Name: "+this.name+" \n"+"AFM: "+this.afm+" \n"+"AMKA: "+this.amka+" \n"+"Mobile: "+this.mobilePhone+" \n\n";
+        return "Id:" + this.id + " \n" + "Name: " + this.name + " \n" + "AFM: " + this.afm + " \n" + "AMKA: " + this.amka + " \n" + "Mobile: "
+            + this.mobilePhone + " \n" + "Email: " + this.email + " \n" + "\n\n";
     }
 }

@@ -16,7 +16,7 @@ public interface UserInfoRepository extends MongoRepository<UserInfo,String> {
     @Query("{mobilePhone: '?0'}")
     UserInfo findByMobilePhone (String mobilePhone);
 
-    @Query(value="{}",fields="{'id' : 1, 'name' : 1, 'afm':1, 'amka':1, 'mobilePhone':1}")
+    @Query(value="{}",fields="{'id' : 1, 'name' : 1, 'afm':1, 'amka':1, 'mobilePhone':1,'email': 1}")
     List<UserInfo> findAll();
 
 }

@@ -3,6 +3,7 @@ package com.alexandros.teleram.bot.telegram.bot;
 import com.alexandros.teleram.bot.services.CommandProcessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -19,6 +20,12 @@ import java.util.List;
 
 @Controller
 public class AlexKapBot extends TelegramLongPollingBot {
+
+	@Value("${bot.token}")
+	private String botToken;
+
+	@Value("${bot.username}")
+	private String botUserName;
 	private final CommandProcessService commandProcessService;
 
 	Logger logger = LoggerFactory.getLogger(LoggerFactory.class);
@@ -87,11 +94,11 @@ public class AlexKapBot extends TelegramLongPollingBot {
 	}
 
 	public String getBotUsername() {
-		return "AlexKap23Bot";
+		return botUserName;
 	}
 
 	public String getBotToken() {
-		return "857045337:AAGwlyQ38QB7yfK3XSIzV9auUhI1hHZJHko";
+		return botToken;
 	}
 
 	public String getBotPath() {
