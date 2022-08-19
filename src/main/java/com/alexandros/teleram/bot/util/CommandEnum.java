@@ -5,7 +5,8 @@ public enum CommandEnum {
     ADD_USER_INFO("addUserInfo","/adduserinfo"),
     UPDATE_USER_INFO("updateUserInfo","/updateuserinfo"),
     DISPLAY("display","/displayinfo"),
-    SHOW_ALL("showAll","/showall");
+    SHOW_ALL("showAll","/showall"),
+    SHOW("show","/show");
 
     private String commandId;
     private String command;

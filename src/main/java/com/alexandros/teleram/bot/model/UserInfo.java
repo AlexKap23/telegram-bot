@@ -3,6 +3,7 @@ package com.alexandros.teleram.bot.model;
 import org.apache.commons.codec.binary.StringUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "botinfo")
@@ -13,9 +14,13 @@ public class UserInfo {
     @Id
     private String id;
     private String name;
+    @Indexed(unique = true)
     private String afm;
+    @Indexed(unique = true)
     private String amka;
+    @Indexed(unique = true)
     private String mobilePhone;
+    @Indexed(unique = true)
     private String email;
 
 

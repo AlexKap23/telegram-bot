@@ -11,7 +11,7 @@ import java.util.List;
 public interface UserInfoRepository extends MongoRepository<UserInfo,String> {
 
     @Query("{name: '?0'}")
-    UserInfo findByName(String name);
+    List<UserInfo> findByName(String name);
 
     @Query("{mobilePhone: '?0'}")
     UserInfo findByMobilePhone (String mobilePhone);
