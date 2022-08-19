@@ -1,6 +1,5 @@
 package com.alexandros.teleram.bot.model;
 
-import org.apache.commons.codec.binary.StringUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
