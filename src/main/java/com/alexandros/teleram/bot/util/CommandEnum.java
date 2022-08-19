@@ -2,19 +2,20 @@ package com.alexandros.teleram.bot.util;
 
 public enum CommandEnum {
 
-    ADD_USER_INFO("addUserInfo","/adduserinfo"),
-    UPDATE_USER_INFO("updateUserInfo","/updateuserinfo"),
-    DISPLAY("display","/displayinfo"),
-    SHOW_ALL("showAll","/showall"),
-    SHOW("show","/show");
+    ADD_USER_INFO("addUserInfo","/adduserinfo","/adduserinfo <name>-<afm>-<amka>-<mobilePhone>-<email>"),
+    UPDATE_USER_INFO("updateUserInfo","/updateuserinfo",""),
+    SHOW_ALL("showAll","/showall","/showall"),
+    SHOW("show","/show","/show <name>"),
+    HELP("help","/help","/help");
 
     private String commandId;
     private String command;
+    private String template;
 
-
-    CommandEnum(String commandId, String command) {
+    CommandEnum(String commandId, String command,String template) {
         this.commandId = commandId;
         this.command = command;
+        this.template = template;
     }
 
     public static CommandEnum getByCommand(String command) {
@@ -40,5 +41,13 @@ public enum CommandEnum {
 
     public void setCommand(String command) {
         this.command = command;
+    }
+
+    public String getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(String template) {
+        this.template = template;
     }
 }

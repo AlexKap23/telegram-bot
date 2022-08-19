@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
 @Service
 public class CommandProcessService {
@@ -50,6 +49,8 @@ public class CommandProcessService {
             response = executeAddNewUserInfo(message);
         }else if(CommandEnum.SHOW.getCommandId().startsWith(commandId)){
             response = executeShowByName(message);
+        }else if(CommandEnum.HELP.getCommandId().equalsIgnoreCase(commandId)){
+            response = executeHelp();
         }
         return response;
     }
@@ -117,5 +118,14 @@ public class CommandProcessService {
         return response;
     }
 
+    private String executeHelp() {
+        //TODO one message with a lot of command examples
+        String addNewHelp = CommandEnum.ADD_USER_INFO.getTemplate();
+        String showAllHelp = CommandEnum.SHOW_ALL.getTemplate();
+        String showByNameHelp = CommandEnum.SHOW.getTemplate();
+        return "Use one of the following commands. ".concat("\n").concat(addNewHelp).concat("\n").concat(showAllHelp).concat("\n")
+            .concat(showByNameHelp);
+
+    }
 
 }
