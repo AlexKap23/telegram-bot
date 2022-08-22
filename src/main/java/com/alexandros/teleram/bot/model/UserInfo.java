@@ -5,11 +5,9 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "botinfo")
+@Document(collection = "userinfo")
 public class UserInfo {
 
-    @Transient
-    public static final String SEQUENCE_NAME = "users_sequence";
     @Id
     private String id;
     private String name;

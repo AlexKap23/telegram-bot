@@ -1,22 +1,28 @@
 package com.alexandros.teleram.bot.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
 import javax.persistence.Id;
 
-@Document(collection = "botinfo")
+@Document(collection = "reservations")
 public class Reservation {
 
     @Id
+    @JsonProperty("id")
     private String id;
+    @JsonProperty("clientName")
     private String clientName;
-    private Date dateTime;
+    @JsonProperty("dateTime")
+    private String dateTime;
+    @JsonProperty("slot")
 
-    public Reservation(String id, String clientName, Date dateTime) {
-        this.id = id;
+    private String slotId;
+
+    public Reservation(String clientName, String dateTime, String slotId) {
         this.clientName = clientName;
         this.dateTime = dateTime;
+        this.slotId = slotId;
     }
 
     public String getId() {
@@ -35,11 +41,19 @@ public class Reservation {
         this.clientName = clientName;
     }
 
-    public Date getDateTime() {
+    public String getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(Date dateTime) {
+    public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
+    }
+
+    public String getSlotId() {
+        return slotId;
+    }
+
+    public void setSlotId(String slotId) {
+        this.slotId = slotId;
     }
 }
