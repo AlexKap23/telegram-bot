@@ -1,8 +1,7 @@
 package com.alexandros.teleram.bot.controllers;
 
-import com.alexandros.teleram.bot.dto.ReservationDto;
 import com.alexandros.teleram.bot.dto.ReservationResponseDto;
-import com.alexandros.teleram.bot.model.Reservation;
+import com.alexandros.teleram.bot.dto.ResponseDto;
 import com.alexandros.teleram.bot.services.BookingReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,8 +27,8 @@ public class ReservationController {
     value = "/new-reservation",
     consumes = {MediaType.APPLICATION_JSON_VALUE},
     produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity addNewReservation(@RequestBody ReservationDto payload) {
-        ReservationResponseDto responseDto = bookingReservationService.createNewReservation(payload);
+    public ResponseEntity addNewReservation(@RequestBody ReservationResponseDto payload) {
+        ResponseDto responseDto = bookingReservationService.createNewReservation(payload);
         if(Objects.nonNull(responseDto)){
             if(responseDto.getCode()==200){
                 return ResponseEntity.ok(responseDto);
@@ -44,7 +43,7 @@ public class ReservationController {
 
     @GetMapping(value = "/reservations/{reservationId}")
     public ResponseEntity getReservationById(@PathVariable String reservationId) {
-        ReservationResponseDto reservation = bookingReservationService.findReservationById(reservationId);
+        ResponseDto reservation = bookingReservationService.findReservationById(reservationId);
         if(Objects.nonNull(reservation)){
             if(reservation.getCode()==200){
                 return ResponseEntity.ok(reservation);

@@ -1,9 +1,12 @@
 package com.alexandros.teleram.bot.services;
 
-import com.alexandros.teleram.bot.dto.ReservationDto;
+import static com.alexandros.teleram.bot.util.Constants.PENDING_STATUS;
+
 import com.alexandros.teleram.bot.dto.ReservationResponseDto;
+import com.alexandros.teleram.bot.dto.ResponseDto;
 import com.alexandros.teleram.bot.model.Reservation;
 import com.alexandros.teleram.bot.repositories.ReservationRepository;
+import com.alexandros.teleram.bot.util.ReservationResponseBuilder;
 import com.alexandros.teleram.bot.util.RestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -24,14 +27,14 @@ public class BookingReservationService {
 
     Logger logger = LoggerFactory.getLogger(LoggerFactory.class);
 
-    public ReservationResponseDto createNewReservation(ReservationDto payload){
-        ReservationResponseDto response = new ReservationResponseDto();
+    public ResponseDto createNewReservation(ReservationResponseDto payload){
+        ResponseDto response = new ResponseDto();
         if(Objects.isNull(payload)){
             response.setCode(400);
             response.setMessage("No payload received");
         }
         try{
-            Reservation reservation = new Reservation(payload.getClientName(),payload.getDateTime(),payload.getSlot());
+            Reservation reservation = new Reservation(payload.getClientName(),payload.getDateTime(),payload.getSlot(),PENDING_STATUS);
             reservationRepository.save(reservation);
             response.setCode(200);
         }catch (Exception e){
@@ -42,30 +45,20 @@ public class BookingReservationService {
         return response;
     }
 
-    public ReservationDto findReservationById(String id) {
-        ReservationDto response = new ReservationDto();
+    public ReservationResponseDto findReservationById(String id) {
         if (StringUtils.isBlank(id)) {
-            response.setCode(400);
-            response.setMessage("No reservation id received");
+            return ReservationResponseBuilder.buildResponse(400,"No reservation id received");
         }
         try {
             Optional<Reservation> optional = reservationRepository.findById(id);
             Reservation reservation = optional.orElse(null);
             if(Objects.isNull(reservation)){
-                response.setCode(404);
-                response.setMessage("No reservation found");
+                return ReservationResponseBuilder.buildResponse(404,"No reservation found");
             }
-            response.setCode(200);
-            response.setClientName(reservation.getClientName());
-            response.setDateTime(reservation.getDateTime());
-            response.setSlot(reservation.getSlotId());
-            response.setId(reservation.getId());
-            return response;
+            return ReservationResponseBuilder.buildReservationResponse(200,StringUtils.EMPTY,reservation.getClientName(),reservation.getDateTime(),reservation.getSlotId(),reservation.getId(),reservation.getStatus());
         } catch (Exception e) {
             logger.error("Exception caught while finding reservation by id "+id, e);
-            response.setCode(500);
-            response.setMessage("Service unavailable");
-            return response;
+            return ReservationResponseBuilder.buildResponse(500,"Service unavailable");
         }
     }
 

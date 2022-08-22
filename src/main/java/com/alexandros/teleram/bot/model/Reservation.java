@@ -18,10 +18,14 @@ public class Reservation {
     @JsonProperty("slot")
     private String slotId;
 
-    public Reservation(String clientName, String dateTime, String slotId) {
+    @JsonProperty("status")
+    private String status;
+
+    public Reservation(String clientName, String dateTime, String slotId, String status) {
         this.clientName = clientName;
         this.dateTime = dateTime;
         this.slotId = slotId;
+        this.status = status;
     }
 
     public String getId() {
@@ -54,5 +58,13 @@ public class Reservation {
 
     public void setSlotId(String slotId) {
         this.slotId = slotId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

@@ -1,23 +1,51 @@
 package com.alexandros.teleram.bot.dto;
 
-public class ReservationResponseDto {
+public class ReservationResponseDto extends ResponseDto {
 
-    private String message;
-    private int code;
+    private String clientName;
+    private String dateTime;
+    private String slot;
+    private String id;
 
-    public int getCode() {
-        return code;
+    private String status;
+
+    public String getClientName() {
+        return clientName;
     }
 
-    public void setCode(int code) {
-        this.code = code;
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
     }
 
-    public String getMessage() {
-        return message;
+    public String getDateTime() {
+        return dateTime;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public String getSlot() {
+        return slot;
+    }
+
+    public void setSlot(String slot) {
+        this.slot = slot;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
