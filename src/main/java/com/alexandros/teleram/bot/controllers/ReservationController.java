@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,12 +42,20 @@ public class ReservationController {
         return ResponseEntity.ok(responseDto);
     }
 
- /*   @GetMapping(value = "/reservations/{reservation}")
-    public Reservation getReservationById(@PathVariable Integer reservation) {
-        //TODO find reservation by id
-        Reservation reservation1 = new Reservation("1","Alexandros Kapniaris","");
-        return reservation1;
-    }*/
+    @GetMapping(value = "/reservations/{reservationId}")
+    public ResponseEntity getReservationById(@PathVariable String reservationId) {
+        ReservationResponseDto reservation = bookingReservationService.findReservationById(reservationId);
+        if(Objects.nonNull(reservation)){
+            if(reservation.getCode()==200){
+                return ResponseEntity.ok(reservation);
+            }else if(reservation.getCode()==500){
+                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(reservation);
+            } else if (reservation.getCode()==400) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(reservation);
+            }
+        }
+        return ResponseEntity.ok().build();
+    }
 
     public BookingReservationService getReservationService() {
         return bookingReservationService;

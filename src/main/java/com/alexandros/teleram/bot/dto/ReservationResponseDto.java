@@ -5,15 +5,6 @@ public class ReservationResponseDto {
     private String message;
     private int code;
 
-    public ReservationResponseDto(String message, int code) {
-        this.message = message;
-        this.code = code;
-    }
-
-    public ReservationResponseDto(int code) {
-        this.code = code;
-    }
-
     public int getCode() {
         return code;
     }

@@ -16,7 +16,6 @@ public class Reservation {
     @JsonProperty("dateTime")
     private String dateTime;
     @JsonProperty("slot")
-
     private String slotId;
 
     public Reservation(String clientName, String dateTime, String slotId) {

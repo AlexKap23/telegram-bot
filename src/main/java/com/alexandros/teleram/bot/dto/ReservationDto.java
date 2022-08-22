@@ -1,10 +1,11 @@
 package com.alexandros.teleram.bot.dto;
 
-public class ReservationDto {
+public class ReservationDto extends ReservationResponseDto{
 
     private String clientName;
     private String dateTime;
     private String slot;
+    private String id;
 
     public String getClientName() {
         return clientName;
@@ -28,5 +29,13 @@ public class ReservationDto {
 
     public void setSlot(String slot) {
         this.slot = slot;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
