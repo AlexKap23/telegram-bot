@@ -56,6 +56,24 @@ public class ReservationController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping(
+        value = "/hanlde-reservation",
+        consumes = {MediaType.APPLICATION_JSON_VALUE},
+        produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity handleReservation(@PathVariable String reservationId, @PathVariable String mode){
+        ResponseDto handle = bookingReservationService.approveOrRejectReservation(reservationId,mode);
+        if(Objects.nonNull(handle)){
+            if(handle.getCode()==200){
+                return ResponseEntity.ok(handle);
+            }else if(handle.getCode()==500){
+                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(handle);
+            } else if (handle.getCode()==400) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(handle);
+            }
+        }
+        return ResponseEntity.ok().build();
+    }
+
     public BookingReservationService getReservationService() {
         return bookingReservationService;
     }
