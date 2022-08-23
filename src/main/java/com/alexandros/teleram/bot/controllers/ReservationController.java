@@ -41,7 +41,7 @@ public class ReservationController {
         return ResponseEntity.ok(responseDto);
     }
 
-    @GetMapping(value = "/reservations/{reservationId}")
+    @GetMapping(value = "/{reservationId}")
     public ResponseEntity getReservationById(@PathVariable String reservationId) {
         ResponseDto reservation = bookingReservationService.findReservationById(reservationId);
         if(Objects.nonNull(reservation)){
@@ -57,9 +57,7 @@ public class ReservationController {
     }
 
     @PostMapping(
-        value = "/hanlde-reservation",
-        consumes = {MediaType.APPLICATION_JSON_VALUE},
-        produces = {MediaType.APPLICATION_JSON_VALUE})
+        value = "/handle-reservation/{reservationId}/{mode}")
     public ResponseEntity handleReservation(@PathVariable String reservationId, @PathVariable String mode){
         ResponseDto handle = bookingReservationService.approveOrRejectReservation(reservationId,mode);
         if(Objects.nonNull(handle)){
