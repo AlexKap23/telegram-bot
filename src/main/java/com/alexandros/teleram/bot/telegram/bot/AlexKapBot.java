@@ -1,5 +1,6 @@
 package com.alexandros.teleram.bot.telegram.bot;
 
+import com.alexandros.teleram.bot.services.BookingReservationService;
 import com.alexandros.teleram.bot.services.CommandProcessService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -28,10 +29,13 @@ public class AlexKapBot extends TelegramLongPollingBot {
 	private String botUserName;
 	private final CommandProcessService commandProcessService;
 
+	private final BookingReservationService bookingReservationService;
+
 	Logger logger = LoggerFactory.getLogger(LoggerFactory.class);
 
-	public AlexKapBot(CommandProcessService commandProcessService) {
+	public AlexKapBot(CommandProcessService commandProcessService, BookingReservationService bookingReservationService) {
 		this.commandProcessService = commandProcessService;
+		this.bookingReservationService = bookingReservationService;
 	}
 
 	@PostConstruct
@@ -50,6 +54,7 @@ public class AlexKapBot extends TelegramLongPollingBot {
 		String command = update.getMessage().getText();
 		try {
 			String message = commandProcessService.executeCommand(command);
+			bookingReservationService.listenForNewReservations();
 			if(StringUtils.isEmpty(message) || StringUtils.isBlank(message)) return;
 			sendMessageToUser(update.getMessage().getChatId(), message);
 		} catch (Exception e) {

@@ -16,5 +16,9 @@ public class Constants {
     public static final String REJECTED_STATUS = "rejected";
     public static final String ACCEPTED_MODE = "1";
     public static final String REJECTED_MODE = "2";
+    public static final String RESERVATIONS_COLLECTION_NAME = "reservations";
+    public static final String OPERATION_TYPE = "operationType";
+    public static final String INSERT_OPERATION_TYPE = "insert";
+
 
 }
