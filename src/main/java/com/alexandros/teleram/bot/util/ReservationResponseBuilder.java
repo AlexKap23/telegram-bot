@@ -1,5 +1,6 @@
 package com.alexandros.teleram.bot.util;
 
+import com.alexandros.teleram.bot.dto.ReservationDto;
 import com.alexandros.teleram.bot.dto.ReservationResponseDto;
 
 public class ReservationResponseBuilder {
@@ -17,10 +18,11 @@ public class ReservationResponseBuilder {
         ReservationResponseDto response = new ReservationResponseDto();
         response.setMessage(message);
         response.setCode(code);
-        response.setClientName(clientName);
-        response.setDateTime(dateTime);
-        response.setSlot(slot);
-        response.setStatus(status);
+        ReservationDto reservationDto = new ReservationDto();
+        reservationDto.setClientName(clientName);
+        reservationDto.setDateTime(dateTime);
+        reservationDto.setSlot(slot);
+        reservationDto.setStatus(status);
         return response;
     }
 
