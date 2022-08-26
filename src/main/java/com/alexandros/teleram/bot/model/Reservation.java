@@ -3,6 +3,7 @@ package com.alexandros.teleram.bot.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Date;
 import javax.persistence.Id;
 
 @Document(collection = "reservations")
@@ -14,14 +15,14 @@ public class Reservation {
     @JsonProperty("clientName")
     private String clientName;
     @JsonProperty("dateTime")
-    private String dateTime;
+    private Date dateTime;
     @JsonProperty("slot")
     private String slotId;
 
     @JsonProperty("status")
     private String status;
 
-    public Reservation(String clientName, String dateTime, String slotId, String status) {
+    public Reservation(String clientName, Date dateTime, String slotId, String status) {
         this.clientName = clientName;
         this.dateTime = dateTime;
         this.slotId = slotId;
@@ -44,11 +45,11 @@ public class Reservation {
         this.clientName = clientName;
     }
 
-    public String getDateTime() {
+    public Date getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(String dateTime) {
+    public void setDateTime(Date dateTime) {
         this.dateTime = dateTime;
     }
 
