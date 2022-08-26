@@ -1,5 +1,6 @@
 package com.alexandros.teleram.bot.controllers;
 
+import com.alexandros.teleram.bot.dto.ReservationDateTimePayloadDto;
 import com.alexandros.teleram.bot.dto.ReservationDto;
 import com.alexandros.teleram.bot.dto.ResponseDto;
 import com.alexandros.teleram.bot.services.BookingReservationService;
@@ -58,6 +59,18 @@ public class ReservationController {
     @GetMapping(value = "/findAll/{mode}")
     public ResponseEntity getReservations(@PathVariable String mode) {
         ResponseDto reservation = bookingReservationService.findAllByMode(mode);
+        return getResponseEntity(reservation);
+    }
+
+    @GetMapping(value = "/findByDate")
+    public ResponseEntity findReservationsByDate(@RequestBody ReservationDateTimePayloadDto payload) {
+        ResponseDto reservation = bookingReservationService.findReservationByDate(payload);
+        return getResponseEntity(reservation);
+    }
+
+    @GetMapping(value = "/findByTimeSlot")
+    public ResponseEntity findByTimeSlot(@RequestBody ReservationDateTimePayloadDto payload) {
+        ResponseDto reservation = bookingReservationService.findReservationsAfterDate(payload);
         return getResponseEntity(reservation);
     }
 

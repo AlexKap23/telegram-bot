@@ -7,6 +7,7 @@ import static com.alexandros.teleram.bot.util.Constants.REJECTED_STATUS;
 import static com.alexandros.teleram.bot.util.DateUtils.buildEndOfDay;
 import static com.alexandros.teleram.bot.util.DateUtils.buildTomorrow;
 
+import com.alexandros.teleram.bot.dto.ReservationDateTimePayloadDto;
 import com.alexandros.teleram.bot.dto.ReservationDto;
 import com.alexandros.teleram.bot.dto.ReservationResponseDto;
 import com.alexandros.teleram.bot.dto.ResponseDto;
@@ -159,9 +160,10 @@ public class BookingReservationService {
     }
 
     /*Code accepts dates of dd/MM/yyyy hh:mm */
-    public ReservationResponseDto findReservationByDate(String date){
-        if(StringUtils.isEmpty(date)) return ReservationResponseBuilder.buildResponse(400,"No date found");
-        Date dateTime = DateUtils.parseDate(date);
+    public ReservationResponseDto findReservationByDate(ReservationDateTimePayloadDto payload){
+        if(Objects.isNull(payload)) return ReservationResponseBuilder.buildResponse(500, "Payload is null");
+        if(StringUtils.isEmpty(payload.getDate())) return ReservationResponseBuilder.buildResponse(400,"No date found");
+        Date dateTime = DateUtils.parseDate(payload.getDate());
         if(Objects.isNull(dateTime)) return ReservationResponseBuilder.buildResponse(500,"Date provided cannot be parsed");
         List<Reservation> reservations = reservationRepository.findByDate(dateTime);
         if(CollectionUtils.isEmpty(reservations)) return ReservationResponseBuilder.buildResponse(200,"No reservations found for given date");
@@ -174,23 +176,24 @@ public class BookingReservationService {
     /*day=0 means today
      * day=1 means tomorrow
      * day=anything else means every day after the date provided*/
-    public ReservationResponseDto findReservationsAfterDate(String date, int day) {
+    public ReservationResponseDto findReservationsAfterDate(ReservationDateTimePayloadDto payload) {
+        if(Objects.isNull(payload)) return ReservationResponseBuilder.buildResponse(500, "Payload is null");
         Date dateTime = null;
         List<Reservation> reservations = new ArrayList<>();
-        if (day == 0) {
+        if (payload.getDay() == 0) {
             //build end date
             Date now = new Date(System.currentTimeMillis());
             Date endOfDay = DateUtils.buildEndOfDay(now);
             reservations = reservationRepository.findByStartEndDate(now, endOfDay);
-        } else if (day == 1) {
+        } else if (payload.getDay() == 1) {
             Date tomorrow = DateUtils.buildTomorrow();
             Date tomorrowEndOfDay = DateUtils.buildEndOfDay(tomorrow);
             reservations = reservationRepository.findByStartEndDate(tomorrow, tomorrowEndOfDay);
         } else {
-            if (StringUtils.isEmpty(date)) {
+            if (StringUtils.isEmpty(payload.getDate())) {
                 return ReservationResponseBuilder.buildResponse(400, "No date found");
             }
-            dateTime = DateUtils.parseDate(date);
+            dateTime = DateUtils.parseDate(payload.getDate());
             if (Objects.isNull(dateTime)) {
                 return ReservationResponseBuilder.buildResponse(500, "Date provided cannot be parsed");
             }
