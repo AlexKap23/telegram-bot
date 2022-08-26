@@ -57,7 +57,7 @@ public class AlexKapBot extends TelegramLongPollingBot {
 		}
 	}
 
-	private void sendMessageToUser(Long chatId, String text) {
+	public void sendMessageToUser(Long chatId, String text) {
 		SendMessage message = new SendMessage()
 			.setChatId(chatId)
 			.setText(text);

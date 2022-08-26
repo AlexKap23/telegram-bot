@@ -10,6 +10,7 @@ import com.alexandros.teleram.bot.dto.ReservationResponseDto;
 import com.alexandros.teleram.bot.dto.ResponseDto;
 import com.alexandros.teleram.bot.model.Reservation;
 import com.alexandros.teleram.bot.repositories.ReservationRepository;
+import com.alexandros.teleram.bot.telegram.bot.AlexKapBot;
 import com.alexandros.teleram.bot.util.ReservationResponseBuilder;
 import com.alexandros.teleram.bot.util.RestUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -17,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,6 +33,10 @@ public class BookingReservationService {
     private RestUtils restUtils;
     @Autowired
     private ReservationRepository reservationRepository;
+    @Autowired
+    private AlexKapBot bot;
+    @Value("${bot.reservation.chat}")
+    private long reservationBotChat;
 
     Logger logger = LoggerFactory.getLogger(LoggerFactory.class);
 
@@ -43,6 +49,8 @@ public class BookingReservationService {
         try{
             Reservation reservation = new Reservation(payload.getClientName(),payload.getDateTime(),payload.getSlot(),PENDING_STATUS);
             reservationRepository.save(reservation);
+            String message = "New Reservation has just been added. \nReservation id is "+reservation.getId(); //message could be enhanced. And also should create a template  about the message to avoid hardcoded strings.
+            bot.sendMessageToUser(getReservationBotChat(),message);
             response.setCode(200);
         }catch (Exception e){
             logger.error("Exception caught while adding reservation",e);
@@ -149,5 +157,21 @@ public class BookingReservationService {
 
     public void setReservationRepository(ReservationRepository reservationRepository) {
         this.reservationRepository = reservationRepository;
+    }
+
+    public AlexKapBot getBot() {
+        return bot;
+    }
+
+    public void setBot(AlexKapBot bot) {
+        this.bot = bot;
+    }
+
+    public long getReservationBotChat() {
+        return reservationBotChat;
+    }
+
+    public void setReservationBotChat(long reservationBotChat) {
+        this.reservationBotChat = reservationBotChat;
     }
 }
