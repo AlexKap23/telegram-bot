@@ -26,4 +26,7 @@ public interface ReservationRepository extends MongoRepository<Reservation,Strin
 
     @Query("{dateTime: {$gte: ?0}}")
     List<Reservation> findByDateTimeAfterDate(Date startDate);
+
+    @Query("{dateTime: '?0',slotId: '?1'}")
+    Reservation findByDateAndSlot(Date dateTime,String slotName);
 }

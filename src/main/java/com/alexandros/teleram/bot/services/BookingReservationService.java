@@ -4,15 +4,17 @@ import static com.alexandros.teleram.bot.util.Constants.ACCEPTED_MODE;
 import static com.alexandros.teleram.bot.util.Constants.ACCEPTED_STATUS;
 import static com.alexandros.teleram.bot.util.Constants.PENDING_STATUS;
 import static com.alexandros.teleram.bot.util.Constants.REJECTED_STATUS;
-import static com.alexandros.teleram.bot.util.DateUtils.buildEndOfDay;
-import static com.alexandros.teleram.bot.util.DateUtils.buildTomorrow;
 
 import com.alexandros.teleram.bot.dto.ReservationDateTimePayloadDto;
 import com.alexandros.teleram.bot.dto.ReservationDto;
 import com.alexandros.teleram.bot.dto.ReservationResponseDto;
 import com.alexandros.teleram.bot.dto.ResponseDto;
+import com.alexandros.teleram.bot.dto.SlotDto;
+import com.alexandros.teleram.bot.dto.SlotResponseDto;
 import com.alexandros.teleram.bot.model.Reservation;
+import com.alexandros.teleram.bot.model.Slot;
 import com.alexandros.teleram.bot.repositories.ReservationRepository;
+import com.alexandros.teleram.bot.repositories.SlotRepository;
 import com.alexandros.teleram.bot.telegram.bot.AlexKapBot;
 import com.alexandros.teleram.bot.util.DateUtils;
 import com.alexandros.teleram.bot.util.ReservationResponseBuilder;
@@ -26,9 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,6 +40,8 @@ public class BookingReservationService {
     private RestUtils restUtils;
     @Autowired
     private ReservationRepository reservationRepository;
+    @Autowired
+    private SlotRepository slotRepository;
     @Autowired
     private AlexKapBot bot;
     @Value("${bot.reservation.chat}")
@@ -208,6 +210,39 @@ public class BookingReservationService {
         return response;
     }
 
+    public boolean checkIfSlotIsAvailable(String slotName,Date date){
+        //TODO check by time slot and not exact time
+        if(Objects.nonNull(date)){
+            Reservation reservation = reservationRepository.findByDateAndSlot(date,slotName);
+            return Objects.isNull(reservation);
+        }
+        return false;
+    }
+
+
+    /* Finding all slots registered. And we characterize them based on if there is a reservation on the given type for the same slot*/
+    public SlotResponseDto findSlots(){
+        SlotResponseDto response = new SlotResponseDto();
+        try{
+            List<Slot> slots = slotRepository.findAll();
+            List<SlotDto> slotDtos = new ArrayList<>();
+            slots.forEach(slot->{
+                SlotDto slotDto = new SlotDto();
+                slotDto.setSlotId(slot.getId());
+                slotDto.setSlotName(slot.getSlotName());
+                slotDto.setAvailable(checkIfSlotIsAvailable(slot.getSlotName(),new Date(System.currentTimeMillis())));
+                slotDtos.add(slotDto);
+            });
+            response.setCode(200);
+            response.setSlots(slotDtos);
+        }catch (Exception e){
+            logger.error("Exception caught while finding slots for reservation",e);
+            response.setCode(500);
+            response.setMessage("Exception caught while finding slots");
+        }
+        return response;
+    }
+
     public RestUtils getRestUtils() {
         return restUtils;
     }
@@ -238,5 +273,13 @@ public class BookingReservationService {
 
     public void setReservationBotChat(long reservationBotChat) {
         this.reservationBotChat = reservationBotChat;
+    }
+
+    public SlotRepository getSlotRepository() {
+        return slotRepository;
+    }
+
+    public void setSlotRepository(SlotRepository slotRepository) {
+        this.slotRepository = slotRepository;
     }
 }
