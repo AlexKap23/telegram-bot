@@ -59,5 +59,16 @@ public class DateUtils {
         return c.getTime();
     }
 
+    public static Date[] buildTimeRangeDates(Date inputDate, int timeRangeInMin){
+        Date[] timeRangeDates = new Date[2];
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(inputDate);
+        calendar.set(Calendar.MINUTE, timeRangeInMin);
+        timeRangeDates[0] = calendar.getTime();
+        calendar.set(Calendar.MINUTE, -(2*timeRangeInMin));
+        timeRangeDates[1] = calendar.getTime();
+        return timeRangeDates;
+    }
+
 
 }

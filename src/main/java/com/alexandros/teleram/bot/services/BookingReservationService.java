@@ -47,6 +47,9 @@ public class BookingReservationService {
     @Value("${bot.reservation.chat}")
     private long reservationBotChat;
 
+    @Value("${reservation.time.range.min}")
+    private int timeRangeInMin;
+
     Logger logger = LoggerFactory.getLogger(LoggerFactory.class);
 
     public ResponseDto createNewReservation(ReservationDto payload){
@@ -211,9 +214,10 @@ public class BookingReservationService {
     }
 
     public boolean checkIfSlotIsAvailable(String slotName,Date date){
-        //TODO check by time slot and not exact time
+        //checking X min before and X min after the provided date. This could be parameterized based on clients needs.
         if(Objects.nonNull(date)){
-            Reservation reservation = reservationRepository.findByDateAndSlot(date,slotName);
+            Date[] timeRange = DateUtils.buildTimeRangeDates(date,getTimeRangeInMin());
+            Reservation reservation = reservationRepository.findByDateAndSlot(timeRange[0],timeRange[1],slotName);
             return Objects.isNull(reservation);
         }
         return false;
@@ -281,5 +285,13 @@ public class BookingReservationService {
 
     public void setSlotRepository(SlotRepository slotRepository) {
         this.slotRepository = slotRepository;
+    }
+
+    public int getTimeRangeInMin() {
+        return timeRangeInMin;
+    }
+
+    public void setTimeRangeInMin(int timeRangeInMin) {
+        this.timeRangeInMin = timeRangeInMin;
     }
 }
