@@ -1,16 +1,21 @@
 package com.alexandros.teleram.bot.util;
 
+import com.alexandros.teleram.bot.dto.ResponseDto;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 
 @Component
 public class RestUtils {
@@ -80,6 +85,20 @@ public class RestUtils {
         }
 
         return stringBuilder.toString();
+    }
+
+    @NotNull
+    public ResponseEntity getResponseEntity(ResponseDto reservation) {
+        if(Objects.nonNull(reservation)){
+            if(reservation.getCode()==200){
+                return ResponseEntity.ok(reservation);
+            }else if(reservation.getCode()==500){
+                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(reservation);
+            } else if (reservation.getCode()==400) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(reservation);
+            }
+        }
+        return ResponseEntity.ok().build();
     }
 
 }
