@@ -90,11 +90,11 @@ public class RestUtils {
     @NotNull
     public ResponseEntity getResponseEntity(ResponseDto reservation) {
         if(Objects.nonNull(reservation)){
-            if(reservation.getCode()==200){
+            if(reservation.getCode()>=200 && reservation.getCode()<200){
                 return ResponseEntity.ok(reservation);
-            }else if(reservation.getCode()==500){
+            }else if(reservation.getCode()>=500 && reservation.getCode()<599){
                 return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(reservation);
-            } else if (reservation.getCode()==400) {
+            } else if (reservation.getCode()>=400 && reservation.getCode()<499) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(reservation);
             }
         }

@@ -99,6 +99,7 @@ public class BookingReservationService {
             return ReservationResponseBuilder.buildResponse(400, "No reservation id received");
         }
         try {
+            //TODO maybe check if it's already accepted/rejected and not do that again
             Optional<Reservation> optional = reservationRepository.findById(reservationId);
             Reservation reservation = optional.orElse(null);
             reservation.setStatus(

@@ -18,7 +18,7 @@ public interface ReservationRepository extends MongoRepository<Reservation,Strin
     @Query("{status: '?0'}")
     List<Reservation> findByStatus(String status);
 
-    @Query("{dateTime: '?0'}")
+    @Query("{dateTime: {$gte: ?0}}")
     List<Reservation> findByDate(Date datetime);
 
     @Query("{dateTime: {$gte: ?0, $lte: ?1}}")
