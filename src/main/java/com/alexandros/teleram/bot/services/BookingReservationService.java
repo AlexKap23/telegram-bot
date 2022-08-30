@@ -124,13 +124,14 @@ public class BookingReservationService {
                 responseDto.setCode(200);
                 return responseDto;
             } else {
-                Optional<Reservation> optional = reservationRepository.findById(mode);
-                Reservation reservation = optional.orElse(null);
-                if (Objects.isNull(reservation)) {
-                    return ReservationResponseBuilder.buildResponse(404, "No reservation found");
+                List<Reservation> reservations = reservationRepository.findByStatus(mode);
+                if(CollectionUtils.isEmpty(reservations)){
+                    return ReservationResponseBuilder.buildResponse(404, "No reservations found");
                 }
-                return ReservationResponseBuilder.buildReservationResponse(200, StringUtils.EMPTY, reservation.getClientName(),
-                    DateUtils.formatDate(reservation.getDateTime()), reservation.getSlotId(), reservation.getId(), reservation.getStatus());
+                ReservationResponseDto response = new ReservationResponseDto();
+                response.setCode(200);
+                response.setReservations(convertEntitiesToDtos(reservations));
+                return response;
             }
         } catch (Exception e) {
             logger.error("Exception caught while finding reservations. Mode is " + mode, e);
