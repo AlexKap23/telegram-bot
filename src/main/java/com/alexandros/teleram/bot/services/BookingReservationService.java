@@ -104,12 +104,14 @@ public class BookingReservationService {
             return ReservationResponseBuilder.buildResponse(400, "No reservation id received");
         }
         try {
-            //TODO maybe check if it's already accepted/rejected and not do that again
+            //in case the reservation with the provided id has already status different from pending, then we do nothing with it. This can be change if it's needed
             Optional<Reservation> optional = reservationRepository.findById(reservationId);
             Reservation reservation = optional.orElse(null);
-            reservation.setStatus(
-                StringUtils.isNotEmpty(mode) ? ACCEPTED_MODE.equalsIgnoreCase(mode) ? ACCEPTED_STATUS : REJECTED_STATUS : PENDING_STATUS);
-            reservationRepository.save(reservation);
+            if(Objects.nonNull(reservation) && !PENDING_STATUS.equalsIgnoreCase(reservation.getStatus())){
+                reservation.setStatus(
+                    StringUtils.isNotEmpty(mode) ? ACCEPTED_MODE.equalsIgnoreCase(mode) ? ACCEPTED_STATUS : REJECTED_STATUS : PENDING_STATUS);
+                reservationRepository.save(reservation);
+            }
             return ReservationResponseBuilder.buildResponse(200, StringUtils.EMPTY);
         } catch (Exception e) {
             logger.error("Exception caught while updating reservation by id " + reservationId, e);
