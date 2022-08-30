@@ -27,7 +27,7 @@ public class SlotController {
     private RestUtils restUtils;
 
     @GetMapping(value = "/all-slots")
-    public ResponseEntity getReservationById() {
+    public ResponseEntity getAllSlots() {
         ResponseDto reservation = bookingReservationService.findSlots();
         return getRestUtils().getResponseEntity(reservation);
     }
