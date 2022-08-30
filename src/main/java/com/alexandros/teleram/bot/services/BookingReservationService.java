@@ -62,11 +62,16 @@ public class BookingReservationService {
         try{
             Date date = DateUtils.parseDate(payload.getDateTime());
             if(Objects.isNull(date)) return ReservationResponseBuilder.buildResponse(500,"date.format.error");
-            Reservation reservation = new Reservation(payload.getClientName(),date,payload.getSlot(),PENDING_STATUS);
-            reservationRepository.save(reservation);
-            String message = "New Reservation has just been added. \nReservation id is "+reservation.getId(); //message could be enhanced. And also should create a template  about the message to avoid hardcoded strings.
-            bot.sendMessageToUser(getReservationBotChat(),message);
+            boolean isSlotAvailable = checkIfSlotIsAvailable(payload.getSlot(),date);
+            if(isSlotAvailable){
+                Reservation reservation = new Reservation(payload.getClientName(),date,payload.getSlot(),PENDING_STATUS);
+                reservationRepository.save(reservation);
+                String message = "New Reservation has just been added. \nReservation id is "+reservation.getId(); //message could be enhanced. And also should create a template  about the message to avoid hardcoded strings.
+                bot.sendMessageToUser(getReservationBotChat(),message);
+                response.setCode(200);
+            }
             response.setCode(200);
+            response.setMessage("Slot is not available");
         }catch (Exception e){
             logger.error("Exception caught while adding reservation",e);
             response.setCode(500);
