@@ -247,6 +247,24 @@ public class BookingReservationService {
         return response;
     }
 
+    public ResponseDto createNewSlot(SlotDto payload){
+        ResponseDto response = new ResponseDto();
+        if(Objects.isNull(payload)){
+            response.setCode(400);
+            response.setMessage("No payload received");
+        }
+        try{
+            Slot newSlot = new Slot(payload.getSlotName(),payload.getSlotDescription());
+            slotRepository.save(newSlot);
+            response.setCode(200);
+        }catch (Exception e){
+            logger.error("Exception caught while saving new slot",e);
+            response.setCode(500);
+            response.setMessage("Exception caught while saving new slot");
+        }
+        return response;
+    }
+
     public RestUtils getRestUtils() {
         return restUtils;
     }

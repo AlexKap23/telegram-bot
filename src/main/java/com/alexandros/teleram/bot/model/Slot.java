@@ -15,6 +15,14 @@ public class Slot {
     @JsonProperty("slotName")
     private String slotName;
 
+    @JsonProperty("slotDesc")
+    private String slotDescription;
+
+    public Slot(String slotName, String slotDescription) {
+        this.slotName = slotName;
+        this.slotDescription = slotDescription;
+    }
+
     public String getSlotName() {
         return slotName;
     }
@@ -31,4 +39,11 @@ public class Slot {
         this.id = id;
     }
 
+    public String getSlotDescription() {
+        return slotDescription;
+    }
+
+    public void setSlotDescription(String slotDescription) {
+        this.slotDescription = slotDescription;
+    }
 }

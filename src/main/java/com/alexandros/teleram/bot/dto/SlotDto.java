@@ -5,6 +5,8 @@ public class SlotDto {
     private String slotId;
     private String slotName;
     private boolean available;
+    private String slotDescription;
+
 
     public String getSlotId() {
         return slotId;
@@ -28,5 +30,13 @@ public class SlotDto {
 
     public void setAvailable(boolean available) {
         this.available = available;
+    }
+
+    public String getSlotDescription() {
+        return slotDescription;
+    }
+
+    public void setSlotDescription(String slotDescription) {
+        this.slotDescription = slotDescription;
     }
 }
