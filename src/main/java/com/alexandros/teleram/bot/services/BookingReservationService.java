@@ -2,6 +2,7 @@ package com.alexandros.teleram.bot.services;
 
 import static com.alexandros.teleram.bot.util.Constants.ACCEPTED_MODE;
 import static com.alexandros.teleram.bot.util.Constants.ACCEPTED_STATUS;
+import static com.alexandros.teleram.bot.util.Constants.ALL;
 import static com.alexandros.teleram.bot.util.Constants.PENDING_STATUS;
 import static com.alexandros.teleram.bot.util.Constants.REJECTED_STATUS;
 
@@ -114,7 +115,7 @@ public class BookingReservationService {
      * Mode variable is there to help utilize the same method to retrieve the reservations either depending by mode or not*/
     public ReservationResponseDto findAllByMode(String mode) {
         try {
-            if (StringUtils.isBlank(mode)) {
+            if (StringUtils.isBlank(mode) || ALL.equalsIgnoreCase(mode)) {
                 List<Reservation> reservations = reservationRepository.findAll();
                 if (CollectionUtils.isEmpty(reservations)) {
                     return ReservationResponseBuilder.buildResponse(404, "No reservations found");

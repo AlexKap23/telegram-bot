@@ -14,6 +14,7 @@ public class Constants {
     public static final String PENDING_STATUS = "pending";
     public static final String ACCEPTED_STATUS = "accepted";
     public static final String REJECTED_STATUS = "rejected";
+    public static final String ALL = "all";
     public static final String ACCEPTED_MODE = "1";
     public static final String REJECTED_MODE = "2";
 
