@@ -64,7 +64,7 @@ public class BookingReservationService {
             if(Objects.isNull(date)) return ReservationResponseBuilder.buildResponse(500,"date.format.error");
             boolean isSlotAvailable = checkIfSlotIsAvailable(payload.getSlot(),date);
             if(isSlotAvailable){
-                Reservation reservation = new Reservation(payload.getClientName(),date,payload.getSlot(),PENDING_STATUS);
+                Reservation reservation = new Reservation(payload.getClientName(),date,payload.getSlot(),PENDING_STATUS,payload.getMobilePhone());
                 reservationRepository.save(reservation);
                 String message = "New Reservation has just been added. \nReservation id is "+reservation.getId(); //message could be enhanced. And also should create a template  about the message to avoid hardcoded strings.
                 bot.sendMessageToUser(getReservationBotChat(),message);
@@ -92,7 +92,7 @@ public class BookingReservationService {
             }
             String date = DateUtils.formatDate(reservation.getDateTime());
             return ReservationResponseBuilder.buildReservationResponse(200, StringUtils.EMPTY, reservation.getClientName(), date,
-                reservation.getSlotId(), reservation.getId(), reservation.getStatus());
+                reservation.getSlotId(), reservation.getId(), reservation.getStatus(),reservation.getMobilePhone());
         } catch (Exception e) {
             logger.error("Exception caught while finding reservation by id " + id, e);
             return ReservationResponseBuilder.buildResponse(500, "Service unavailable");
@@ -156,6 +156,7 @@ public class BookingReservationService {
         reservationDto.setDateTime(DateUtils.formatDate(reservation.getDateTime()));
         reservationDto.setSlot(reservation.getSlotId());
         reservationDto.setStatus(reservation.getStatus());
+        reservationDto.setMobilePhone(reservation.getMobilePhone());
         return reservationDto;
     }
 
@@ -169,6 +170,7 @@ public class BookingReservationService {
             reservationDto.setDateTime(DateUtils.formatDate(reservation.getDateTime()));
             reservationDto.setSlot(reservation.getSlotId());
             reservationDto.setStatus(reservation.getStatus());
+            reservationDto.setMobilePhone(reservation.getMobilePhone());
             reservationDtos.add(reservationDto);
         }
         return reservationDtos;

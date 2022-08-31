@@ -14,7 +14,7 @@ public class ReservationResponseBuilder {
     }
 
     public static ReservationResponseDto buildReservationResponse(int code, String message, String clientName, String dateTime, String slot,String id,
-        String status) {
+        String status,String mobilePhone) {
         ReservationResponseDto response = new ReservationResponseDto();
         response.setMessage(message);
         response.setCode(code);
@@ -23,6 +23,7 @@ public class ReservationResponseBuilder {
         reservationDto.setDateTime(dateTime);
         reservationDto.setSlot(slot);
         reservationDto.setStatus(status);
+        reservationDto.setMobilePhone(mobilePhone);
         return response;
     }
 

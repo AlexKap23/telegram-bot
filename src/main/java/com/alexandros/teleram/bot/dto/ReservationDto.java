@@ -6,8 +6,9 @@ public class ReservationDto extends ResponseDto {
     private String dateTime;
     private String slot;
     private String id;
-
     private String status;
+
+    private String mobilePhone;
 
     public String getClientName() {
         return clientName;
@@ -47,5 +48,13 @@ public class ReservationDto extends ResponseDto {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getMobilePhone() {
+        return mobilePhone;
+    }
+
+    public void setMobilePhone(String mobilePhone) {
+        this.mobilePhone = mobilePhone;
     }
 }

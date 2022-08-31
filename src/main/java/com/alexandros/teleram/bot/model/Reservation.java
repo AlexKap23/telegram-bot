@@ -22,11 +22,15 @@ public class Reservation {
     @JsonProperty("status")
     private String status;
 
-    public Reservation(String clientName, Date dateTime, String slotId, String status) {
+    @JsonProperty
+    private String mobilePhone;
+
+    public Reservation(String clientName, Date dateTime, String slotId, String status, String mobilePhone) {
         this.clientName = clientName;
         this.dateTime = dateTime;
         this.slotId = slotId;
         this.status = status;
+        this.mobilePhone = mobilePhone;
     }
 
     public String getId() {
@@ -67,5 +71,13 @@ public class Reservation {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getMobilePhone() {
+        return mobilePhone;
+    }
+
+    public void setMobilePhone(String mobilePhone) {
+        this.mobilePhone = mobilePhone;
     }
 }
