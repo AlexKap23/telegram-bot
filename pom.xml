@@ -114,6 +114,19 @@
 			<version>4.4</version>
 		</dependency>
 
+		<!--KAFKA + MQTT-->
+		<!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients -->
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-clients</artifactId>
+			<version>3.2.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.fusesource.mqtt-client</groupId>
+			<artifactId>mqtt-client</artifactId>
+			<version>1.7</version>
+		</dependency>
 
 	</dependencies>
 

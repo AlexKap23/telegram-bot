@@ -1,9 +1,12 @@
 package com.alexandros.teleram.bot.telegram.bot;
 
+import com.alexandros.teleram.bot.kafka.MqttConsumerToKafkaProducer;
+import com.alexandros.teleram.bot.kafka.TelegramBotKafkaConsumer;
 import com.alexandros.teleram.bot.services.CommandProcessService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
@@ -28,6 +31,12 @@ public class AlexKapBot extends TelegramLongPollingBot {
 	private String botUserName;
 	private final CommandProcessService commandProcessService;
 
+	@Autowired
+	private MqttConsumerToKafkaProducer mqttConsumerToKafkaProducer;
+
+	@Autowired
+	private TelegramBotKafkaConsumer kafkaConsumer;
+
 	Logger logger = LoggerFactory.getLogger(LoggerFactory.class);
 
 	public AlexKapBot(CommandProcessService commandProcessService) {
@@ -50,6 +59,10 @@ public class AlexKapBot extends TelegramLongPollingBot {
 		String command = update.getMessage().getText();
 		try {
 			String message = commandProcessService.executeCommand(command);
+			if("kafka".equalsIgnoreCase(message)){
+				mqttConsumerToKafkaProducer.transferMessages();
+				kafkaConsumer.consumeKafkaMessages();
+			}
 			if(StringUtils.isEmpty(message) || StringUtils.isBlank(message)) return;
 			sendMessageToUser(update.getMessage().getChatId(), message);
 		} catch (Exception e) {
@@ -57,7 +70,7 @@ public class AlexKapBot extends TelegramLongPollingBot {
 		}
 	}
 
-	private void sendMessageToUser(Long chatId, String text) {
+	public void sendMessageToUser(Long chatId, String text) {
 		SendMessage message = new SendMessage()
 			.setChatId(chatId)
 			.setText(text);
