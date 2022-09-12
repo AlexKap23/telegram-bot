@@ -7,6 +7,7 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -22,17 +23,19 @@ public class MqttConsumerToKafkaProducer {
     private static final String SERIALIZER_CLASS = "serializerclass";
     private static final String BROKER_LIST = "brokerlist";
 
+    @Value("${kafka.bootstrap.server}")
+    private String bootstrapServer;
+
     Logger logger = LoggerFactory.getLogger(LoggerFactory.class);
 
     public void transferMessages(){
         try{
-            String bootstrapServers = "127.0.0.1:9092";
             Properties properties = new Properties();
-            properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+            properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
             properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
             properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,StringSerializer.class.getName());
 
-            KafkaProducer<String,String> sensorDataProducer = new KafkaProducer<String, String>(properties);
+            KafkaProducer<String,String> sensorDataProducer = new KafkaProducer<>(properties);
 
             //some data from mqtt to test the kafka client
             ProducerRecord<String,String> record = new ProducerRecord<String,String>("temp","22");
@@ -67,7 +70,5 @@ public class MqttConsumerToKafkaProducer {
         }catch (Exception e){
             logger.error("Exception caught on bridge",e);
         }
-
-
     }
 }

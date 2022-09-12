@@ -58,11 +58,11 @@ public class AlexKapBot extends TelegramLongPollingBot {
 	public void onUpdateReceived(Update update) {
 		String command = update.getMessage().getText();
 		try {
-			String message = commandProcessService.executeCommand(command);
-			if("kafka".equalsIgnoreCase(message)){
+			if("kafka".equalsIgnoreCase(command)){
 				mqttConsumerToKafkaProducer.transferMessages();
 				kafkaConsumer.consumeKafkaMessages();
 			}
+			String message = commandProcessService.executeCommand(command);
 			if(StringUtils.isEmpty(message) || StringUtils.isBlank(message)) return;
 			sendMessageToUser(update.getMessage().getChatId(), message);
 		} catch (Exception e) {
