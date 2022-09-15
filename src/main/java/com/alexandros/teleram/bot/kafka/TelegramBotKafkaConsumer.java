@@ -5,12 +5,9 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -29,16 +26,6 @@ public class TelegramBotKafkaConsumer {
 
     Logger logger = LoggerFactory.getLogger(TelegramBotKafkaConsumer.class);
 
-//    @PostConstruct
-//    public void init(){
-//        consumeKafkaMessages();
-//    }
-
-
-    @KafkaListener(topics = "test", groupId = "console-consumer-11642")
-    public void listen(String message) {
-        logger.info("Received Messasge in group - group-id: " + message);
-    }
 
     public void consumeKafkaMessages(){
         String groupId = "console-consumer-11642";

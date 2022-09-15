@@ -1,34 +1,37 @@
 package com.alexandros.teleram.bot.kafka;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
+
+import java.util.Properties;
+import javax.annotation.PostConstruct;
 
 
 @Component
 public class MqttConsumerToKafkaProducer {
 
+
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServer;
-
-    @Autowired
-    private final KafkaTemplate<String, String> kafkaTemplate;
     Logger logger = LoggerFactory.getLogger(LoggerFactory.class);
-
-    public MqttConsumerToKafkaProducer(KafkaTemplate<String, String> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate;
-    }
 
     public void transferMessages(){
         try{
+            Properties properties = new Properties();
+            properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
+            properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+            properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
-            kafkaTemplate.send("temp", "22")
-                .addCallback(
-                    result -> logger.info("Message sent to topic: {}", 22),
-                    ex -> logger.error("Failed to send message", ex)
-                );
+            KafkaProducer<String, String> kafkaProducer = new KafkaProducer<String, String>(properties);
+            ProducerRecord<String, String> record = new ProducerRecord<>("temp", "22");
+            kafkaProducer.send(record);
+            kafkaProducer.flush();
+            kafkaProducer.close();
 
            /* MQTT mqtt = new MQTT();
             mqtt.setHost(cmd.getOptionValue(MQTT_BROKER_HOST, "localhost"), Integer.parseInt(cmd.getOptionValue(MQTT_BROKER_PORT, "1883")));
