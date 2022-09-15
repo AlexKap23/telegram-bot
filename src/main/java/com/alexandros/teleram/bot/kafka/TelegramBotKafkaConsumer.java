@@ -1,6 +1,5 @@
 package com.alexandros.teleram.bot.kafka;
 
-import com.alexandros.teleram.bot.telegram.bot.AlexKapBot;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -11,29 +10,39 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Properties;
+import javax.annotation.PostConstruct;
 
 @Service
 public class TelegramBotKafkaConsumer {
 
-    @Autowired
-    private AlexKapBot alexKapBot;
-
     @Value("${bot.reservation.chat}")
     private long reservationBotChat;
 
-    @Value("${kafka.bootstrap.server}")
+    @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServer;
 
-    Logger logger = LoggerFactory.getLogger(LoggerFactory.class);
+    Logger logger = LoggerFactory.getLogger(TelegramBotKafkaConsumer.class);
+
+//    @PostConstruct
+//    public void init(){
+//        consumeKafkaMessages();
+//    }
+
+
+    @KafkaListener(topics = "test", groupId = "console-consumer-11642")
+    public void listen(String message) {
+        logger.info("Received Messasge in group - group-id: " + message);
+    }
 
     public void consumeKafkaMessages(){
-        String groupId = "consumerBot";
-        String topic = "temp";
+        String groupId = "console-consumer-11642";
+        String topic = "test";
         Properties properties = new Properties();
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServer());
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
@@ -48,7 +57,7 @@ public class TelegramBotKafkaConsumer {
             ConsumerRecords<String,String> records = consumer.poll(Duration.ofMillis(100));
             for(ConsumerRecord<String,String> record:records){
                 String message = "Key: "+record.key() + ", Value: "+record.value();
-                alexKapBot.sendMessageToUser(getReservationBotChat(),message);
+                logger.info("Consumer: " + message);
             }
         }
     }

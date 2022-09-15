@@ -2,121 +2,87 @@ package com.alexandros.teleram.bot.telegram.bot;
 
 import com.alexandros.teleram.bot.kafka.MqttConsumerToKafkaProducer;
 import com.alexandros.teleram.bot.kafka.TelegramBotKafkaConsumer;
-import com.alexandros.teleram.bot.services.CommandProcessService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import javax.annotation.PostConstruct;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-@Controller
+@Component
 public class AlexKapBot extends TelegramLongPollingBot {
 
-	@Value("${bot.token}")
-	private String botToken;
+    @Value("${bot.token}")
+    public String botToken;
 
-	@Value("${bot.username}")
-	private String botUserName;
-	private final CommandProcessService commandProcessService;
+    @Value("${bot.username}")
+    public String botUserName;
 
-	@Autowired
-	private MqttConsumerToKafkaProducer mqttConsumerToKafkaProducer;
+    @Autowired
+    private MqttConsumerToKafkaProducer mqttConsumerToKafkaProducer;
 
-	@Autowired
-	private TelegramBotKafkaConsumer kafkaConsumer;
+    @Autowired
+    private TelegramBotKafkaConsumer kafkaConsumer;
 
-	Logger logger = LoggerFactory.getLogger(LoggerFactory.class);
+    Logger logger = LoggerFactory.getLogger(LoggerFactory.class);
 
-	public AlexKapBot(CommandProcessService commandProcessService) {
-		this.commandProcessService = commandProcessService;
-	}
+    @PostConstruct
+    public void init(){
+        try {
+            TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
+            telegramBotsApi.registerBot(this);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
 
-	@PostConstruct
-	public void registerBot() {
-		TelegramBotsApi botsApi = new TelegramBotsApi();
-		try {
-			botsApi.registerBot(this);
-			logger.info("TelegramBotService.afterPropertiesSet:registerBot finish");
-		} catch (TelegramApiException e) {
-			logger.error(e.getMessage());
-		}
-	}
+    @Override
+    public void onUpdateReceived(Update update) {
+        String command = update.getMessage().getText();
+        sendMessageToUser(update.getMessage().getChatId(), command);
+        try {
+            if ("kafka".equalsIgnoreCase(command)) {
+                mqttConsumerToKafkaProducer.transferMessages();
+//				kafkaConsumer.consumeKafkaMessages();
+            }
+//			if(StringUtils.isEmpty(message) || StringUtils.isBlank(message)) return;
+//			sendMessageToUser(update.getMessage().getChatId(), message);
+        } catch (Exception e) {
+            logger.error("Exception caught while update received", e.getCause());
+        }
+    }
 
-	@Override
-	public void onUpdateReceived(Update update) {
-		String command = update.getMessage().getText();
-		try {
-			if("kafka".equalsIgnoreCase(command)){
-				mqttConsumerToKafkaProducer.transferMessages();
-				kafkaConsumer.consumeKafkaMessages();
-			}
-			String message = commandProcessService.executeCommand(command);
-			if(StringUtils.isEmpty(message) || StringUtils.isBlank(message)) return;
-			sendMessageToUser(update.getMessage().getChatId(), message);
-		} catch (Exception e) {
-			logger.error("Exception caught while update received", e.getCause());
-		}
-	}
-
-	public void sendMessageToUser(Long chatId, String text) {
-		SendMessage message = new SendMessage()
-			.setChatId(chatId)
-			.setText(text);
-		try {
-			execute(message);
-		} catch (TelegramApiException e) {
-			logger.error(e.getMessage());
-		}
-	}
-
-	private Date formatStringDate(String myDate) {
-		SimpleDateFormat formater = new SimpleDateFormat("dd/MM/yyyy");
-		Date rememberDate = null;
-		try {
-			logger.debug("DEBUG - Parsing remember date");
-			rememberDate = formater.parse(myDate);
-		} catch (ParseException e) {
-			logger.error(e.getMessage());
-		}
-		return rememberDate;
-	}
+    public void sendMessageToUser(Long chatId, String text) {
+        SendMessage message = SendMessage.builder().chatId(chatId).text(text).build();
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            logger.error(e.getMessage());
+        }
+    }
 
 
-	//@Scheduled(cron = "0 0 10 ? * *")
-	@Scheduled(cron = "0 54 13 ? * *")
-	private void fetchIdea() {
-		logger.debug("DEBUG - Fetching ideas");
-		/*List<Idea> todaysThings = ideaRepository.fetchByRememberDate(new Date());
-		for (Idea idea : todaysThings) {
-			sendMessageToUser(idea.getChatId(),
-			                  "ID:".concat(String.valueOf(idea.getId())).concat(" message is: " + idea.getMessage()));
-			logger.debug("DEBUG - Sending idea now");
-		}*/
+    @Override
+    public String getBotUsername() {
+        return this.botUserName;
+    }
 
-	}
-
-	public String getBotUsername() {
-		return botUserName;
-	}
-
-	public String getBotToken() {
-		return botToken;
-	}
-
-	public String getBotPath() {
-		return null;
-	}
-
+    @Override
+    public String getBotToken() {
+        return this.botToken;
+    }
 }
