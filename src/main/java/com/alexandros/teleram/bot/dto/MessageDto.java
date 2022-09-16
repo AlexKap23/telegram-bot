@@ -12,6 +12,11 @@ public class MessageDto implements Serializable {
     @JsonProperty("topic")
     private String topic;
 
+    public MessageDto(String message, String topic) {
+        this.message = message;
+        this.topic = topic;
+    }
+
     public String getMessage() {
         return message;
     }
